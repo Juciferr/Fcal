@@ -11,166 +11,153 @@
 <link rel="manifest" id="manifest-link">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#0f1117;--surface:#181c27;--surface2:#1e2333;--border:#2a2f45;
   --text:#f0f2ff;--muted:#6b7399;--accent:#1fcf8a;--accent-dim:#0f6e4a;
-  --danger:#ff5757;--danger-dim:#5c1c1c;--warn:#f0a500;--warn-dim:#5c3c00;
-  --info:#4a9eff;--font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  --danger:#ff5757;--warn:#f0a500;--info:#4a9eff;--purple:#a78bfa;
+  --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
   --radius:14px;--radius-sm:8px;--safe-bottom:env(safe-area-inset-bottom,0px)
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;overscroll-behavior:none}
 body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
-
-/* Header */
-.header{padding:52px 20px 16px;background:var(--bg);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border)}
+.header{padding:52px 20px 14px;background:var(--bg);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border)}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
 .app-title{font-size:22px;font-weight:600;letter-spacing:-0.5px}
 .month-label{font-size:13px;color:var(--muted);font-family:var(--mono)}
-.header-actions{display:flex;gap:8px}
 .icon-btn{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:18px;transition:all .15s}
 .icon-btn:active{transform:scale(.93)}
-
-/* Nav */
-.nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:8px 12px calc(8px + var(--safe-bottom));position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:100;gap:4px}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-radius:var(--radius-sm);border:none;background:none;color:var(--muted);cursor:pointer;font-size:10px;font-family:var(--font);transition:all .15s}
-.nav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px 8px calc(6px + var(--safe-bottom));position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:100;gap:2px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;border-radius:var(--radius-sm);border:none;background:none;color:var(--muted);cursor:pointer;font-size:9px;font-family:var(--font);transition:all .15s}
+.nav-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav-btn.active{color:var(--accent);background:rgba(31,207,138,.08)}
 .nav-btn:active{transform:scale(.93)}
-
-/* Scroll area */
-.scroll{flex:1;overflow-y:auto;padding:16px 20px calc(80px + var(--safe-bottom));-webkit-overflow-scrolling:touch}
-
-/* Pages */
+.scroll{flex:1;overflow-y:auto;padding:16px 16px calc(80px + var(--safe-bottom));-webkit-overflow-scrolling:touch}
 .page{display:none}.page.active{display:block}
-
-/* Cards */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
-
-/* Metric grid */
-.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-.metric-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500}
-.metric-value{font-size:20px;font-weight:600;font-family:var(--mono);letter-spacing:-0.5px}
-.metric-value.green{color:var(--accent)}.metric-value.red{color:var(--danger)}.metric-value.yellow{color:var(--warn)}
-
-/* Alert */
-.alert{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.metric-value{font-size:19px;font-weight:600;font-family:var(--mono);letter-spacing:-0.5px}
+.metric-value.green{color:var(--accent)}.metric-value.red{color:var(--danger)}.metric-value.yellow{color:var(--warn)}.metric-value.purple{color:var(--purple)}
+.alert{border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;margin-bottom:10px;display:flex;gap:9px;align-items:flex-start;line-height:1.5}
 .alert.success{background:rgba(31,207,138,.1);border:1px solid rgba(31,207,138,.25);color:#6effc4}
 .alert.danger{background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.25);color:#ffaaaa}
 .alert.warn{background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.25);color:#ffd166}
 .alert.info{background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.25);color:#a0caff}
-.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-
-/* Progress */
-.progress{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-top:10px}
+.progress{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-top:8px}
 .progress-fill{height:100%;border-radius:100px;transition:width .4s cubic-bezier(.4,0,.2,1)}
-
-/* Budget row */
 .b-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px}
 .b-row:last-child{border-bottom:none}
 .b-row .label{color:var(--muted);font-size:13px}
 .b-row .val{font-family:var(--mono);font-weight:500}
-
-/* Payment items */
-.pay-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.pay-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
 .pay-item:last-child{border-bottom:none}
-.check-circle{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;color:transparent}
+.check-circle{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;color:transparent;margin-top:2px}
 .check-circle.checked{background:var(--accent);border-color:var(--accent);color:#fff}
-.check-circle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.check-circle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .pay-info{flex:1;min-width:0}
 .pay-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pay-sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono)}
-.badge{font-size:10px;padding:3px 8px;border-radius:100px;font-weight:600;white-space:nowrap}
+.pay-extra{font-size:11px;color:var(--accent);margin-top:3px}
+.badge{font-size:10px;padding:3px 7px;border-radius:100px;font-weight:600;white-space:nowrap}
 .badge.paid{background:rgba(31,207,138,.15);color:var(--accent)}
 .badge.unpaid{background:rgba(240,165,0,.15);color:var(--warn)}
 .badge.done{background:rgba(74,158,255,.15);color:var(--info)}
-.badge.red{background:rgba(255,87,87,.15);color:var(--danger)}
-
-/* Daily items */
-.daily-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.badge.loan{background:rgba(167,139,250,.15);color:var(--purple)}
+.daily-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .daily-item:last-child{border-bottom:none}
-.cat-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cat-icon{width:34px;height:34px;border-radius:var(--radius-sm);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .daily-info{flex:1;min-width:0}
 .daily-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .daily-date{font-size:11px;color:var(--muted);font-family:var(--mono)}
 .daily-amt{font-family:var(--mono);font-weight:600;font-size:14px;color:var(--danger)}
-
-/* Forms */
-.form-group{margin-bottom:12px}
-.form-label{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;display:block}
-input[type=text],input[type=number],select,textarea{
-  width:100%;padding:11px 14px;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text);
-  font-size:15px;
-  font-family:var(--font);
-  outline:none;
-  transition:border-color .15s;
-  appearance:none;-webkit-appearance:none
-}
+.form-group{margin-bottom:11px}
+.form-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;display:block}
+input[type=text],input[type=number],select,textarea{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:var(--font);outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none}
 input:focus,select:focus{border-color:var(--accent)}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7399' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7399' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-.input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-/* Buttons */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:var(--radius-sm);border:none;font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;transition:all .15s}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.input-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:12px;border-radius:var(--radius-sm);border:none;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
 .btn:active{transform:scale(.97)}
 .btn.primary{background:var(--accent);color:#0a2e1e}
-.btn.primary:hover{opacity:.9}
 .btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .btn.danger-btn{background:rgba(255,87,87,.1);color:var(--danger);border:1px solid rgba(255,87,87,.3)}
-.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* Delete btn */
-.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;display:flex;align-items:center;transition:color .15s;flex-shrink:0}
+.btn.purple-btn{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:5px;border-radius:6px;display:flex;align-items:center;transition:color .15s;flex-shrink:0}
 .del-btn:active{color:var(--danger)}
-.del-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* Divider */
-hr{border:none;border-top:1px solid var(--border);margin:10px 0}
-
-/* Section header */
-.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.section-title{font-size:16px;font-weight:600}
-
-/* Empty */
-.empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:14px;line-height:1.7}
-.empty-icon{font-size:32px;display:block;margin-bottom:8px}
-
-/* Notif permission */
-.notif-bar{background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.2);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:#a0caff;margin-bottom:12px;display:flex;align-items:center;gap:10px}
-
-/* Settings rows */
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.del-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+hr{border:none;border-top:1px solid var(--border);margin:9px 0}
+.section-title{font-size:15px;font-weight:600;margin-bottom:13px}
+.empty{text-align:center;padding:24px 16px;color:var(--muted);font-size:14px;line-height:1.7}
+.empty-icon{font-size:30px;display:block;margin-bottom:7px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)}
 .setting-row:last-child{border-bottom:none}
 .setting-info .setting-name{font-size:14px;font-weight:500}
 .setting-info .setting-desc{font-size:12px;color:var(--muted);margin-top:2px}
-.toggle{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0}
 .toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:100px;transition:.2s}
-.toggle-slider:before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s}
+.toggle-slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s}
 .toggle input:checked+.toggle-slider{background:var(--accent)}
 .toggle input:checked+.toggle-slider:before{transform:translateX(18px)}
-
-/* Scroll bar */
 ::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:100px}
-
-/* Toast */
-.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 16px;font-size:13px;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;max-width:90vw}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* day group */
-.day-group{margin-bottom:16px}
-.day-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-family:var(--mono)}
+.day-group{margin-bottom:14px}
+.day-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px;font-family:var(--mono);display:flex;justify-content:space-between}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.modal{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:20px 16px calc(20px + var(--safe-bottom));width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:17px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:22px;line-height:1}
+/* Tab pills */
+.tab-pills{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.tab-pill{padding:6px 14px;border-radius:100px;border:1px solid var(--border);background:none;color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;font-family:var(--font);transition:all .15s}
+.tab-pill.active{background:var(--accent);color:#0a2e1e;border-color:var(--accent);font-weight:600}
+/* Savings goal */
+.goal-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.goal-item:last-child{border-bottom:none}
+.goal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.goal-name{font-size:14px;font-weight:500}
+.goal-amounts{font-size:12px;color:var(--muted);font-family:var(--mono)}
+/* Split */
+.split-person{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.split-person:last-child{border-bottom:none}
+/* Chart container */
+.chart-wrap{position:relative;height:200px;margin-top:8px}
+/* Category budget */
+.cat-budget-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.cat-budget-row:last-child{border-bottom:none}
+.cat-budget-icon{font-size:20px;flex-shrink:0}
+.cat-budget-info{flex:1;min-width:0}
+.cat-budget-name{font-size:13px;font-weight:500}
+.cat-budget-bar{height:4px;background:var(--border);border-radius:100px;margin-top:4px;overflow:hidden}
+.cat-budget-fill{height:100%;border-radius:100px}
+.cat-budget-amt{font-size:12px;font-family:var(--mono);color:var(--muted);white-space:nowrap}
+/* Grocery list */
+.grocery-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.grocery-item:last-child{border-bottom:none}
+.grocery-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;color:transparent}
+.grocery-check.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.grocery-check svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.grocery-name{flex:1;font-size:14px}
+.grocery-name.done{text-decoration:line-through;color:var(--muted)}
+/* Loan payoff */
+.payoff-box{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-top:10px}
+.payoff-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.payoff-row .label{color:var(--muted)}
+.payoff-row .val{font-family:var(--mono);font-weight:500}
+/* Receipt note */
+.note-tag{font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -181,11 +168,9 @@ hr{border:none;border-top:1px solid var(--border);margin:10px 0}
       <div class="app-title">💰 My Finances</div>
       <div class="month-label" id="month-label"></div>
     </div>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="requestNotif()" title="Enable notifications" aria-label="Enable notifications">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </button>
-    </div>
+    <button class="icon-btn" onclick="requestNotif()" title="Notifications" aria-label="Enable notifications">
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
   </div>
 </div>
 
@@ -193,313 +178,354 @@ hr{border:none;border-top:1px solid var(--border);margin:10px 0}
   <div class="page active" id="page-overview"></div>
   <div class="page" id="page-recurring"></div>
   <div class="page" id="page-daily"></div>
+  <div class="page" id="page-tools"></div>
   <div class="page" id="page-settings"></div>
 </div>
 
 <nav class="nav">
   <button class="nav-btn active" onclick="nav('overview')" id="nav-overview">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    Overview
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview
   </button>
   <button class="nav-btn" onclick="nav('recurring')" id="nav-recurring">
-    <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
-    Recurring
+    <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Recurring
   </button>
   <button class="nav-btn" onclick="nav('daily')" id="nav-daily">
-    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-    Daily
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Daily
+  </button>
+  <button class="nav-btn" onclick="nav('tools')" id="nav-tools">
+    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Tools
   </button>
   <button class="nav-btn" onclick="nav('settings')" id="nav-settings">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    Settings
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
   </button>
 </nav>
 
+<div id="modal-container"></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const CURRENCY = 'JOD';
-const fmt = n => CURRENCY + ' ' + parseFloat(n).toFixed(2);
-const today = () => new Date().toISOString().slice(0,10);
-const monthKey = () => new Date().toISOString().slice(0,7);
+const CURRENCY='JOD';
+const fmt=n=>CURRENCY+' '+parseFloat(n||0).toFixed(2);
+const today=()=>new Date().toISOString().slice(0,10);
+const monthKey=()=>new Date().toISOString().slice(0,7);
+const prevMonthKey=()=>{const d=new Date();d.setMonth(d.getMonth()-1);return d.toISOString().slice(0,7)};
 
-let S = JSON.parse(localStorage.getItem('myfin_v2') || 'null') || {
-  income: 0,
-  recurring: [],
-  daily: {},
-  settings: { notifMonthly: true, notifDaily: true, notifGranted: false }
+let S=JSON.parse(localStorage.getItem('myfin_v3')||'null')||{
+  income:0,recurring:[],daily:{},goals:[],splits:[],grocery:[],
+  catBudgets:{},settings:{notifMonthly:true,notifDaily:true,notifGranted:false}
 };
-const save = () => localStorage.setItem('myfin_v2', JSON.stringify(S));
+const save=()=>localStorage.setItem('myfin_v3',JSON.stringify(S));
 
-// ---- TOAST ----
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+// migrate from old version
+if(localStorage.getItem('myfin_v2')){
+  const old=JSON.parse(localStorage.getItem('myfin_v2'));
+  S.income=old.income||0;S.recurring=old.recurring||[];S.daily=old.daily||{};
+  S.settings=Object.assign(S.settings,old.settings||{});
+  save();
 }
 
-// ---- NAV ----
-function nav(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('nav-' + page).classList.add('active');
-  document.getElementById('main-scroll').scrollTop = 0;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+function nav(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page).classList.add('active');
+  document.getElementById('main-scroll').scrollTop=0;
   render(page);
 }
-
-// ---- RENDER ROUTER ----
-function render(page) {
-  if(page === 'overview') renderOverview();
-  else if(page === 'recurring') renderRecurring();
-  else if(page === 'daily') renderDaily();
-  else if(page === 'settings') renderSettings();
+function render(page){
+  if(page==='overview')renderOverview();
+  else if(page==='recurring')renderRecurring();
+  else if(page==='daily')renderDaily();
+  else if(page==='tools')renderTools();
+  else if(page==='settings')renderSettings();
 }
-function renderAll() { render('overview'); }
-
-// ---- MONTH LABEL ----
-function initHeader() {
-  const now = new Date();
-  document.getElementById('month-label').textContent =
-    now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+function renderAll(){render('overview')}
+function initHeader(){
+  document.getElementById('month-label').textContent=new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
 }
 
-// ---- OVERVIEW ----
-function renderOverview() {
-  const income = parseFloat(S.income) || 0;
-  const mk = monthKey();
-  const totalRec = S.recurring.reduce((s,r) => s + parseFloat(r.amount), 0);
-  const dailyAll = S.daily[mk] || [];
-  const totalDaily = dailyAll.reduce((s,d) => s + parseFloat(d.amount), 0);
-  const totalSpent = totalRec + totalDaily;
-  const remaining = income - totalSpent;
-  const shortage = income > 0 && remaining < 0;
-  const paidCount = S.recurring.filter(r => r.paidMonths && r.paidMonths[mk]).length;
+// ===================== OVERVIEW =====================
+function renderOverview(){
+  const income=parseFloat(S.income)||0;
+  const mk=monthKey(),pmk=prevMonthKey();
+  const totalRec=S.recurring.reduce((s,r)=>s+parseFloat(r.amount),0);
+  const dailyAll=S.daily[mk]||[];
+  const totalDaily=dailyAll.reduce((s,d)=>s+parseFloat(d.amount),0);
+  const totalSpent=totalRec+totalDaily;
+  const remaining=income-totalSpent;
+  const shortage=income>0&&remaining<0;
+  const paidCount=S.recurring.filter(r=>r.paidMonths&&r.paidMonths[mk]).length;
 
-  let alertHTML = '';
-  if(income === 0) {
-    alertHTML = `<div class="alert info"><span class="alert-icon">💡</span><span>Set your monthly income in <strong>Settings</strong> to see budget analysis.</span></div>`;
-  } else if(shortage) {
-    alertHTML = `<div class="alert danger"><span class="alert-icon">⚠️</span><span><strong>Budget shortage!</strong> You are over by ${fmt(Math.abs(remaining))} this month.</span></div>`;
-  } else if(remaining < income * 0.15) {
-    alertHTML = `<div class="alert warn"><span class="alert-icon">⚡</span><span>Only <strong>${fmt(remaining)}</strong> left — less than 15% of your income.</span></div>`;
-  } else {
-    alertHTML = `<div class="alert success"><span class="alert-icon">✅</span><span>On track — <strong>${fmt(remaining)}</strong> remaining this month.</span></div>`;
-  }
+  // prev month
+  const prevDaily=(S.daily[pmk]||[]).reduce((s,d)=>s+parseFloat(d.amount),0);
+  const prevTotal=S.recurring.reduce((s,r)=>s+parseFloat(r.amount),0)+prevDaily;
+  const vsLastMonth=income>0?totalSpent-prevTotal:null;
 
-  const pct = n => income > 0 ? Math.min(100, Math.round(n / income * 100)) : 0;
-  const barColor = shortage ? '#ff5757' : remaining < income * 0.15 ? '#f0a500' : '#1fcf8a';
+  let alertHTML='';
+  if(income===0){alertHTML=`<div class="alert info"><span>💡</span><span>Set your monthly income in <strong>Settings</strong> to see budget analysis.</span></div>`;}
+  else if(shortage){alertHTML=`<div class="alert danger"><span>⚠️</span><span><strong>Budget shortage!</strong> Over by ${fmt(Math.abs(remaining))} this month.</span></div>`;}
+  else if(remaining<income*0.15){alertHTML=`<div class="alert warn"><span>⚡</span><span>Only <strong>${fmt(remaining)}</strong> left — less than 15% of income.</span></div>`;}
+  else{alertHTML=`<div class="alert success"><span>✅</span><span>On track — <strong>${fmt(remaining)}</strong> remaining.</span></div>`;}
 
-  const recItems = S.recurring.length === 0
-    ? '<div class="empty"><span class="empty-icon">📋</span>No recurring payments added yet</div>'
-    : S.recurring.map((r, i) => {
-        const paid = r.paidMonths && r.paidMonths[mk];
-        const left = r.totalMonths > 0 ? r.totalMonths - (r.paidCount || 0) : null;
-        const done = left !== null && left <= 0;
-        return `<div class="pay-item">
-          <button class="check-circle ${paid || done ? 'checked' : ''}" onclick="togglePaid(${i})" aria-label="Mark payment">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-          <div class="pay-info">
-            <div class="pay-name">${r.name}</div>
-            <div class="pay-sub">${fmt(r.amount)} · Day ${r.dueDay}${left !== null ? ' · ' + (left > 0 ? left + ' left' : 'done') : ''}</div>
-          </div>
-          <span class="badge ${done ? 'done' : paid ? 'paid' : 'unpaid'}">${done ? 'Done' : paid ? 'Paid' : 'Unpaid'}</span>
-        </div>`;
-      }).join('');
+  const pct=n=>income>0?Math.min(100,Math.round(n/income*100)):0;
+  const barColor=shortage?'#ff5757':remaining<income*0.15?'#f0a500':'#1fcf8a';
 
-  document.getElementById('page-overview').innerHTML = `
+  // category breakdown for chart
+  const catTotals={};
+  dailyAll.forEach(e=>{catTotals[e.cat]=(catTotals[e.cat]||0)+parseFloat(e.amount)});
+  const catNames={'🍔':'Food','🚗':'Transport','🛍️':'Shopping','💊':'Health','🎉':'Fun','🏠':'Home','📦':'Other'};
+  const catColors=['#1fcf8a','#4a9eff','#f0a500','#ff5757','#a78bfa','#34d399','#fb923c'];
+  const catKeys=Object.keys(catTotals);
+  const chartData=catKeys.map(k=>catTotals[k]);
+  const chartLabels=catKeys.map(k=>catNames[k]||k);
+
+  const vsHTML=vsLastMonth!==null?`<div style="font-size:11px;color:${vsLastMonth>0?'var(--danger)':'var(--accent)'};margin-top:3px">${vsLastMonth>0?'▲':'▼'} ${fmt(Math.abs(vsLastMonth))} vs last month</div>`:'';
+
+  const recItems=S.recurring.length===0
+    ?'<div class="empty"><span class="empty-icon">📋</span>No recurring payments added yet</div>'
+    :S.recurring.slice(0,4).map((r,i)=>{
+      const paid=r.paidMonths&&r.paidMonths[mk];
+      const left=r.totalMonths>0?r.totalMonths-(r.paidCount||0):null;
+      const done=left!==null&&left<=0;
+      return `<div class="pay-item">
+        <button class="check-circle ${paid||done?'checked':''}" onclick="togglePaid(${i})" aria-label="Mark paid"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+        <div class="pay-info">
+          <div class="pay-name">${r.name}</div>
+          <div class="pay-sub">${fmt(r.amount)}${left!==null?' · '+left+' left':''}</div>
+        </div>
+        <span class="badge ${done?'done':paid?'paid':'unpaid'}">${done?'Done':paid?'Paid':'Due'}</span>
+      </div>`;
+    }).join('')+(S.recurring.length>4?`<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0">+${S.recurring.length-4} more in Recurring tab</div>`:'');
+
+  document.getElementById('page-overview').innerHTML=`
     ${alertHTML}
     <div class="metric-grid">
-      <div class="metric">
-        <div class="metric-label">💵 Monthly Income</div>
-        <div class="metric-value">${income > 0 ? fmt(income) : '—'}</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">💸 Total Spent</div>
-        <div class="metric-value ${shortage ? 'red' : ''}">${fmt(totalSpent)}</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">🏦 Remaining</div>
-        <div class="metric-value ${income === 0 ? '' : shortage ? 'red' : remaining < income * 0.15 ? 'yellow' : 'green'}">${income > 0 ? fmt(remaining) : '—'}</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">✅ Bills Paid</div>
-        <div class="metric-value">${paidCount}<span style="font-size:13px;color:var(--muted)">/${S.recurring.length}</span></div>
-      </div>
+      <div class="metric"><div class="metric-label">💵 Income</div><div class="metric-value">${income>0?fmt(income):'—'}</div></div>
+      <div class="metric"><div class="metric-label">💸 Spent</div><div class="metric-value ${shortage?'red':''}">${fmt(totalSpent)}${vsHTML}</div></div>
+      <div class="metric"><div class="metric-label">🏦 Remaining</div><div class="metric-value ${income===0?'':shortage?'red':remaining<income*0.15?'yellow':'green'}">${income>0?fmt(remaining):'—'}</div></div>
+      <div class="metric"><div class="metric-label">✅ Bills Paid</div><div class="metric-value">${paidCount}<span style="font-size:12px;color:var(--muted)">/${S.recurring.length}</span></div></div>
     </div>
-    ${income > 0 ? `
-    <div class="card">
+    ${income>0?`<div class="card">
       <div class="card-title">Budget Breakdown</div>
-      <div class="b-row"><span class="label">Recurring payments</span><span class="val">${fmt(totalRec)} <span style="color:var(--muted);font-size:12px">(${pct(totalRec)}%)</span></span></div>
-      <div class="b-row"><span class="label">Daily expenses</span><span class="val">${fmt(totalDaily)} <span style="color:var(--muted);font-size:12px">(${pct(totalDaily)}%)</span></span></div>
+      <div class="b-row"><span class="label">Recurring</span><span class="val">${fmt(totalRec)} (${pct(totalRec)}%)</span></div>
+      <div class="b-row"><span class="label">Daily expenses</span><span class="val">${fmt(totalDaily)} (${pct(totalDaily)}%)</span></div>
       <hr>
-      <div class="b-row"><span style="font-weight:600">Total</span><span class="val" style="color:${barColor}">${fmt(totalSpent)} <span style="color:var(--muted);font-size:12px">(${pct(totalSpent)}%)</span></span></div>
+      <div class="b-row"><span style="font-weight:600">Total</span><span class="val" style="color:${barColor}">${fmt(totalSpent)} (${pct(totalSpent)}%)</span></div>
       <div class="progress"><div class="progress-fill" style="width:${pct(totalSpent)}%;background:${barColor}"></div></div>
-    </div>` : ''}
+    </div>`:''}
+    ${catKeys.length>0?`<div class="card">
+      <div class="card-title">Spending by Category</div>
+      <div class="chart-wrap"><canvas id="cat-chart" role="img" aria-label="Spending by category pie chart">${chartLabels.map((l,i)=>l+': '+fmt(chartData[i])).join(', ')}</canvas></div>
+    </div>`:''}
     <div class="card">
-      <div class="card-title">This Month's Payments</div>
+      <div class="card-title">This Month's Bills</div>
       ${recItems}
     </div>
   `;
+
+  // render chart after DOM update
+  if(catKeys.length>0){
+    setTimeout(()=>{
+      const ctx=document.getElementById('cat-chart');
+      if(!ctx)return;
+      if(ctx._chart)ctx._chart.destroy();
+      ctx._chart=new Chart(ctx,{
+        type:'doughnut',
+        data:{labels:chartLabels,datasets:[{data:chartData,backgroundColor:catColors.slice(0,catKeys.length),borderWidth:0,hoverOffset:4}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6b7399',font:{size:11},boxWidth:10,padding:10}}}}
+      });
+    },50);
+  }
 }
 
-// ---- RECURRING ----
-function renderRecurring() {
-  const mk = monthKey();
-  const list = S.recurring.length === 0
-    ? '<div class="empty"><span class="empty-icon">🔄</span>No recurring payments yet.<br>Add your first one below.</div>'
-    : S.recurring.map((r, i) => {
-        const paid = r.paidMonths && r.paidMonths[mk];
-        const left = r.totalMonths > 0 ? r.totalMonths - (r.paidCount || 0) : null;
-        const done = left !== null && left <= 0;
-        return `<div class="pay-item">
-          <button class="check-circle ${paid || done ? 'checked' : ''}" onclick="togglePaid(${i})" aria-label="Toggle paid">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
+// ===================== RECURRING =====================
+function renderRecurring(){
+  const mk=monthKey();
+  let days='<option value="">Due day</option>';
+  for(let d=1;d<=31;d++)days+=`<option value="${d}">Day ${d}</option>`;
+
+  const list=S.recurring.length===0
+    ?'<div class="empty"><span class="empty-icon">🔄</span>No recurring payments yet.</div>'
+    :S.recurring.map((r,i)=>{
+      const paid=r.paidMonths&&r.paidMonths[mk];
+      const left=r.totalMonths>0?r.totalMonths-(r.paidCount||0):null;
+      const done=left!==null&&left<=0;
+      const extraTotal=(r.extraPayments||[]).reduce((s,e)=>s+parseFloat(e.amount),0);
+      const isLoan=r.category==='Loan';
+      return `<div class="card" style="padding:13px">
+        <div class="pay-item" style="padding:0;border:none">
+          <button class="check-circle ${paid||done?'checked':''}" onclick="togglePaid(${i})" aria-label="Toggle paid"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
           <div class="pay-info">
-            <div class="pay-name">${r.name}</div>
-            <div class="pay-sub">${fmt(r.amount)} · Due day ${r.dueDay} · ${r.category}</div>
-            <div style="font-size:11px;margin-top:3px;color:${left !== null && left <= 2 ? 'var(--danger)' : 'var(--muted)'}">
-              ${left !== null ? (left > 0 ? '⏳ ' + left + ' payment' + (left === 1 ? '' : 's') + ' remaining' : '🎉 Fully paid off') : '🔁 Ongoing'}
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span class="pay-name">${r.name}</span>
+              <span class="badge ${isLoan?'loan':done?'done':paid?'paid':'unpaid'}">${r.category}</span>
             </div>
+            <div class="pay-sub">${fmt(r.amount)} · Due day ${r.dueDay}</div>
+            ${left!==null?`<div style="font-size:11px;margin-top:3px;color:${left<=2&&!done?'var(--danger)':'var(--muted)'}">
+              ${done?'🎉 Fully paid off':'⏳ '+left+' payment'+(left===1?'':'s')+' remaining'}
+            </div>`:'<div style="font-size:11px;color:var(--muted);margin-top:3px">🔁 Ongoing</div>'}
+            ${extraTotal>0?`<div class="pay-extra">+${fmt(extraTotal)} extra paid · saved ${left!==null?Math.floor(extraTotal/parseFloat(r.amount))+' months':''}</div>`:''}
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-            <span class="badge ${done ? 'done' : paid ? 'paid' : 'unpaid'}">${done ? 'Done' : paid ? 'Paid' : 'Unpaid'}</span>
-            <button class="del-btn" onclick="deleteRec(${i})" aria-label="Delete">
-              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-            </button>
+          <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+            <span class="badge ${done?'done':paid?'paid':'unpaid'}">${done?'Done':paid?'Paid':'Unpaid'}</span>
+            <button class="del-btn" onclick="deleteRec(${i})" aria-label="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg></button>
           </div>
-        </div>`;
-      }).join('');
+        </div>
+        ${isLoan&&!done?`<div style="margin-top:10px;display:flex;gap:6px">
+          <button class="btn purple-btn" style="flex:1;padding:8px" onclick="openExtraPayment(${i})">💰 Pay Extra</button>
+          <button class="btn secondary" style="flex:1;padding:8px" onclick="openPayoffCalc(${i})">📊 Payoff Calc</button>
+        </div>`:''}
+      </div>`;
+    }).join('');
 
-  let days = '<option value="">Day of month</option>';
-  for(let d = 1; d <= 31; d++) days += `<option value="${d}">Day ${d}</option>`;
-
-  document.getElementById('page-recurring').innerHTML = `
+  document.getElementById('page-recurring').innerHTML=`
     <div class="card">
-      <div class="section-title" style="margin-bottom:14px">Add Recurring Payment</div>
-      <div class="form-group">
-        <label class="form-label">Payment name</label>
-        <input type="text" id="rec-name" placeholder="e.g. Rent, Netflix, Car loan">
+      <div class="section-title">Add Recurring Payment</div>
+      <div class="form-group"><label class="form-label">Name</label><input type="text" id="rec-name" placeholder="e.g. Rent, Car loan, Netflix"></div>
+      <div class="input-row" style="margin-bottom:10px">
+        <div><label class="form-label">Amount (JOD)</label><input type="number" id="rec-amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div><label class="form-label">Due day</label><select id="rec-day">${days}</select></div>
       </div>
       <div class="input-row" style="margin-bottom:12px">
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Amount (JOD)</label>
-          <input type="number" id="rec-amt" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Due day</label>
-          <select id="rec-day">${days}</select>
-        </div>
+        <div><label class="form-label">Total months (0=ongoing)</label><input type="number" id="rec-months" placeholder="0" min="0"></div>
+        <div><label class="form-label">Category</label><select id="rec-cat"><option value="Bill">Bill</option><option value="Subscription">Subscription</option><option value="Loan">Loan</option><option value="Rent">Rent</option><option value="Other">Other</option></select></div>
       </div>
-      <div class="input-row" style="margin-bottom:14px">
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Total months</label>
-          <input type="number" id="rec-months" placeholder="0 = ongoing" min="0">
-        </div>
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Category</label>
-          <select id="rec-cat">
-            <option value="Bill">Bill</option>
-            <option value="Subscription">Subscription</option>
-            <option value="Loan">Loan</option>
-            <option value="Rent">Rent</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn primary" onclick="addRec()">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Payment
-      </button>
+      <button class="btn primary" onclick="addRec()">+ Add Payment</button>
     </div>
-    <div class="card">
-      <div class="card-title">All Recurring Payments</div>
-      ${list}
-    </div>
+    ${list}
   `;
 }
 
-// ---- DAILY ----
-function renderDaily() {
-  const mk = monthKey();
-  const td = today();
-  const entries = S.daily[mk] || [];
-  const todayEntries = entries.filter(e => e.date === td);
-  const todayTotal = todayEntries.reduce((s, e) => s + parseFloat(e.amount), 0);
-  const monthTotal = entries.reduce((s, e) => s + parseFloat(e.amount), 0);
+// ===================== EXTRA PAYMENT MODAL =====================
+function openExtraPayment(i){
+  const r=S.recurring[i];
+  showModal(`Extra Payment — ${r.name}`,`
+    <div class="alert info" style="margin-bottom:14px"><span>💡</span><span>Extra payments reduce your remaining installments and save you money.</span></div>
+    <div class="form-group"><label class="form-label">Extra amount (JOD)</label><input type="number" id="extra-amt" placeholder="0.00" min="0" step="0.01"></div>
+    <div class="form-group"><label class="form-label">Note (optional)</label><input type="text" id="extra-note" placeholder="e.g. Bonus payment"></div>
+    <div id="extra-preview" style="margin:10px 0"></div>
+    <button class="btn primary" onclick="addExtraPayment(${i})">Confirm Extra Payment</button>
+  `);
+  setTimeout(()=>{
+    document.getElementById('extra-amt').addEventListener('input',()=>{
+      const amt=parseFloat(document.getElementById('extra-amt').value)||0;
+      const left=r.totalMonths>0?r.totalMonths-(r.paidCount||0):null;
+      if(amt>0&&left!==null){
+        const saved=Math.floor(amt/parseFloat(r.amount));
+        const newLeft=Math.max(0,left-saved);
+        document.getElementById('extra-preview').innerHTML=`<div class="payoff-box">
+          <div class="payoff-row"><span class="label">Extra payment</span><span class="val">${fmt(amt)}</span></div>
+          <div class="payoff-row"><span class="label">Months saved</span><span class="val" style="color:var(--accent)">${saved}</span></div>
+          <div class="payoff-row"><span class="label">Remaining after</span><span class="val">${newLeft} month${newLeft===1?'':'s'}</span></div>
+        </div>`;
+      } else document.getElementById('extra-preview').innerHTML='';
+    });
+  },50);
+}
 
-  // group by day for recent view
-  const byDay = {};
-  entries.forEach(e => {
-    if(!byDay[e.date]) byDay[e.date] = [];
-    byDay[e.date].push(e);
+function addExtraPayment(i){
+  const amt=parseFloat(document.getElementById('extra-amt').value);
+  const note=document.getElementById('extra-note').value.trim();
+  if(!amt||amt<=0){toast('⚠️ Enter an amount');return;}
+  const r=S.recurring[i];
+  if(!r.extraPayments)r.extraPayments=[];
+  const saved=Math.floor(amt/parseFloat(r.amount));
+  r.extraPayments.push({amount:amt,note,date:today(),saved});
+  r.paidCount=(r.paidCount||0)+saved;
+  save();closeModal();renderRecurring();
+  toast(`✅ Extra payment added · ${saved} month${saved===1?'':'s'} saved!`);
+}
+
+function openPayoffCalc(i){
+  const r=S.recurring[i];
+  const left=r.totalMonths>0?r.totalMonths-(r.paidCount||0):null;
+  const baseAmt=parseFloat(r.amount);
+  showModal(`Payoff Calculator — ${r.name}`,`
+    <div class="payoff-box" style="margin-bottom:14px">
+      <div class="payoff-row"><span class="label">Regular payment</span><span class="val">${fmt(baseAmt)}</span></div>
+      ${left!==null?`<div class="payoff-row"><span class="label">Months remaining</span><span class="val">${left}</span></div>
+      <div class="payoff-row"><span class="label">Total left to pay</span><span class="val">${fmt(left*baseAmt)}</span></div>`:''}
+    </div>
+    <div class="form-group"><label class="form-label">If I add extra per month (JOD)</label><input type="number" id="calc-extra" placeholder="0.00" min="0" step="0.01" oninput="calcPayoff(${i})"></div>
+    <div id="calc-result"></div>
+  `);
+}
+
+function calcPayoff(i){
+  const r=S.recurring[i];
+  const extra=parseFloat(document.getElementById('calc-extra').value)||0;
+  const base=parseFloat(r.amount);
+  const left=r.totalMonths>0?r.totalMonths-(r.paidCount||0):null;
+  if(!left){document.getElementById('calc-result').innerHTML='<div style="color:var(--muted);font-size:13px">This is an ongoing payment — set total months to calculate.</div>';return;}
+  const newLeft=extra>0?Math.ceil((left*base)/(base+extra)):left;
+  const saved=left-newLeft;
+  const moneySaved=saved*base;
+  document.getElementById('calc-result').innerHTML=`<div class="payoff-box">
+    <div class="payoff-row"><span class="label">New monthly payment</span><span class="val">${fmt(base+extra)}</span></div>
+    <div class="payoff-row"><span class="label">Finish in</span><span class="val" style="color:var(--accent)">${newLeft} month${newLeft===1?'':'s'}</span></div>
+    <div class="payoff-row"><span class="label">Months saved</span><span class="val" style="color:var(--accent)">${saved}</span></div>
+    <div class="payoff-row"><span class="label">Money saved</span><span class="val" style="color:var(--accent)">${fmt(moneySaved)}</span></div>
+  </div>`;
+}
+
+// ===================== DAILY =====================
+function renderDaily(){
+  const mk=monthKey(),td=today();
+  const entries=S.daily[mk]||[];
+  const todayEntries=entries.filter(e=>e.date===td);
+  const todayTotal=todayEntries.reduce((s,e)=>s+parseFloat(e.amount),0);
+  const monthTotal=entries.reduce((s,e)=>s+parseFloat(e.amount),0);
+
+  // cat budgets warning
+  const catBudgetAlerts=[];
+  Object.keys(S.catBudgets||{}).forEach(cat=>{
+    const budget=parseFloat(S.catBudgets[cat])||0;
+    if(!budget)return;
+    const spent=entries.filter(e=>e.cat===cat).reduce((s,e)=>s+parseFloat(e.amount),0);
+    if(spent>=budget)catBudgetAlerts.push(`<span style="color:var(--danger)">${cat} over budget!</span>`);
+    else if(spent>=budget*0.8)catBudgetAlerts.push(`<span style="color:var(--warn)">${cat} at ${Math.round(spent/budget*100)}% of budget</span>`);
   });
-  const sortedDays = Object.keys(byDay).sort().reverse().slice(0, 10);
 
-  const histHTML = sortedDays.length === 0 ? '<div class="empty"><span class="empty-icon">📝</span>No expenses logged yet.</div>' :
-    sortedDays.map(d => {
-      const dayTotal = byDay[d].reduce((s, e) => s + parseFloat(e.amount), 0);
-      const label = d === td ? '📅 Today' : d;
+  const byDay={};
+  entries.forEach(e=>{if(!byDay[e.date])byDay[e.date]=[];byDay[e.date].push(e)});
+  const sortedDays=Object.keys(byDay).sort().reverse().slice(0,10);
+
+  const histHTML=sortedDays.length===0
+    ?'<div class="empty"><span class="empty-icon">📝</span>No expenses logged yet.</div>'
+    :sortedDays.map(d=>{
+      const dayTotal=byDay[d].reduce((s,e)=>s+parseFloat(e.amount),0);
       return `<div class="day-group">
-        <div class="day-label" style="display:flex;justify-content:space-between">
-          <span>${label}</span><span style="color:var(--danger)">${fmt(dayTotal)}</span>
-        </div>
-        ${byDay[d].slice().reverse().map(e => `
+        <div class="day-label"><span>${d===td?'📅 Today':d}</span><span style="color:var(--danger)">${fmt(dayTotal)}</span></div>
+        ${byDay[d].slice().reverse().map(e=>`
           <div class="daily-item">
             <div class="cat-icon">${e.cat}</div>
             <div class="daily-info">
               <div class="daily-name">${e.name}</div>
+              ${e.note?`<div class="note-tag">📎 ${e.note}</div>`:''}
             </div>
             <div class="daily-amt">${fmt(e.amount)}</div>
-            <button class="del-btn" onclick="deleteDaily('${e.id}')" aria-label="Delete">
-              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
-            </button>
+            <button class="del-btn" onclick="deleteDaily('${e.id}')" aria-label="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg></button>
           </div>`).join('')}
       </div>`;
     }).join('');
 
-  document.getElementById('page-daily').innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div>
-        <div style="font-size:13px;color:var(--muted)">Today's total</div>
-        <div style="font-size:26px;font-weight:600;font-family:var(--mono);color:${todayTotal > 0 ? 'var(--danger)' : 'var(--muted)'}">${fmt(todayTotal)}</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:13px;color:var(--muted)">Month total</div>
-        <div style="font-size:18px;font-weight:600;font-family:var(--mono)">${fmt(monthTotal)}</div>
-      </div>
+  document.getElementById('page-daily').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div><div style="font-size:12px;color:var(--muted)">Today</div><div style="font-size:24px;font-weight:600;font-family:var(--mono);color:${todayTotal>0?'var(--danger)':'var(--muted)'}">${fmt(todayTotal)}</div></div>
+      <div style="text-align:right"><div style="font-size:12px;color:var(--muted)">This month</div><div style="font-size:18px;font-weight:600;font-family:var(--mono)">${fmt(monthTotal)}</div></div>
     </div>
+    ${catBudgetAlerts.length>0?`<div class="alert warn"><span>⚡</span><div>${catBudgetAlerts.join(' · ')}</div></div>`:''}
     <div class="card">
-      <div class="section-title" style="margin-bottom:14px">Log Expense</div>
-      <div class="form-group">
-        <label class="form-label">What did you spend on?</label>
-        <input type="text" id="d-name" placeholder="e.g. Lunch, Taxi, Groceries">
+      <div class="section-title">Log Expense</div>
+      <div class="form-group"><label class="form-label">Description</label><input type="text" id="d-name" placeholder="e.g. Lunch, Taxi, Groceries"></div>
+      <div class="input-row" style="margin-bottom:10px">
+        <div><label class="form-label">Amount (JOD)</label><input type="number" id="d-amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div><label class="form-label">Category</label><select id="d-cat"><option value="🍔">🍔 Food</option><option value="🚗">🚗 Transport</option><option value="🛍️">🛍️ Shopping</option><option value="💊">💊 Health</option><option value="🎉">🎉 Fun</option><option value="🏠">🏠 Home</option><option value="📦">📦 Other</option></select></div>
       </div>
-      <div class="input-row" style="margin-bottom:14px">
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Amount (JOD)</label>
-          <input type="number" id="d-amt" placeholder="0.00" min="0" step="0.01">
-        </div>
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Category</label>
-          <select id="d-cat">
-            <option value="🍔">🍔 Food</option>
-            <option value="🚗">🚗 Transport</option>
-            <option value="🛍️">🛍️ Shopping</option>
-            <option value="💊">💊 Health</option>
-            <option value="🎉">🎉 Fun</option>
-            <option value="🏠">🏠 Home</option>
-            <option value="📦">📦 Other</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn primary" onclick="addDaily()">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Log Expense
-      </button>
+      <div class="form-group"><label class="form-label">Receipt note (optional)</label><input type="text" id="d-note" placeholder="e.g. Business lunch, Shared with Ali"></div>
+      <button class="btn primary" onclick="addDaily()">+ Log Expense</button>
     </div>
     <div class="card">
       <div class="card-title">Expense History</div>
@@ -508,195 +534,371 @@ function renderDaily() {
   `;
 }
 
-// ---- SETTINGS ----
-function renderSettings() {
-  document.getElementById('page-settings').innerHTML = `
-    <div class="card">
-      <div class="card-title">Income</div>
-      <div class="form-group">
-        <label class="form-label">Monthly income (JOD)</label>
-        <input type="number" id="inc-input" value="${S.income || ''}" placeholder="0.00" min="0" step="0.01" onchange="saveIncome()">
-      </div>
-      <div style="font-size:12px;color:var(--muted);margin-top:-4px">Used to calculate your remaining budget and detect shortages.</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Notifications</div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-name">Monthly payment reminder</div>
-          <div class="setting-desc">Reminds you on the 1st of each month to check bills</div>
-        </div>
-        <label class="toggle"><input type="checkbox" id="tog-monthly" ${S.settings.notifMonthly ? 'checked' : ''} onchange="saveSettings()"><span class="toggle-slider"></span></label>
-      </div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-name">Daily expense reminder</div>
-          <div class="setting-desc">Reminds you at 9 PM to log today's expenses</div>
-        </div>
-        <label class="toggle"><input type="checkbox" id="tog-daily" ${S.settings.notifDaily ? 'checked' : ''} onchange="saveSettings()"><span class="toggle-slider"></span></label>
-      </div>
-      <div style="margin-top:14px">
-        <button class="btn secondary" onclick="requestNotif()" style="margin-bottom:8px">
-          🔔 Enable Notifications
-        </button>
-        <div id="notif-status" style="font-size:12px;color:var(--muted);text-align:center"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Data</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:14px">All data is stored on this device only. Nothing is sent to any server.</div>
-      <button class="btn danger-btn" onclick="clearMonthData()" style="margin-bottom:8px">
-        🗑️ Clear This Month's Daily Expenses
-      </button>
-      <button class="btn danger-btn" onclick="clearAll()">
-        ⚠️ Reset All Data
-      </button>
-    </div>
-    <div style="text-align:center;padding:16px 0;font-size:12px;color:var(--muted)">
-      My Finances · Free personal expense tracker<br>All data stays on your device
-    </div>
+// ===================== TOOLS =====================
+let toolTab='savings';
+function renderTools(){
+  const tabs=[['savings','🎯 Savings'],['splits','👥 Splits'],['grocery','🛒 Grocery'],['catbudget','📊 Cat. Budget'],['report','📄 Report']];
+  document.getElementById('page-tools').innerHTML=`
+    <div class="tab-pills">${tabs.map(([k,l])=>`<button class="tab-pill ${toolTab===k?'active':''}" onclick="switchToolTab('${k}')">${l}</button>`).join('')}</div>
+    <div id="tool-content"></div>
   `;
+  renderToolContent();
+}
+function switchToolTab(t){toolTab=t;renderTools();}
+function renderToolContent(){
+  const el=document.getElementById('tool-content');
+  if(toolTab==='savings')el.innerHTML=renderSavings();
+  else if(toolTab==='splits')el.innerHTML=renderSplits();
+  else if(toolTab==='grocery')el.innerHTML=renderGrocery();
+  else if(toolTab==='catbudget')el.innerHTML=renderCatBudget();
+  else if(toolTab==='report')el.innerHTML=renderReport();
 }
 
-// ---- ACTIONS ----
-function addRec() {
-  const name = document.getElementById('rec-name').value.trim();
-  const amt = parseFloat(document.getElementById('rec-amt').value);
-  const day = parseInt(document.getElementById('rec-day').value);
-  const months = parseInt(document.getElementById('rec-months').value) || 0;
-  const cat = document.getElementById('rec-cat').value;
-  if(!name || isNaN(amt) || amt <= 0 || !day) { toast('⚠️ Please fill in name, amount and due day'); return; }
-  S.recurring.push({ id: Date.now(), name, amount: amt, dueDay: day, totalMonths: months, paidCount: 0, category: cat, paidMonths: {} });
-  save(); renderRecurring(); toast('✅ Payment added');
+// --- SAVINGS ---
+function renderSavings(){
+  const goalItems=S.goals.length===0
+    ?'<div class="empty"><span class="empty-icon">🎯</span>No savings goals yet. Add one below!</div>'
+    :S.goals.map((g,i)=>{
+      const pct=Math.min(100,Math.round((g.saved/g.target)*100));
+      const color=pct>=100?'#1fcf8a':pct>=50?'#4a9eff':'#f0a500';
+      return `<div class="goal-item">
+        <div class="goal-header">
+          <div>
+            <div class="goal-name">${g.name}</div>
+            <div class="goal-amounts" style="margin-top:2px">${fmt(g.saved)} of ${fmt(g.target)} · ${pct}%</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn secondary" style="width:auto;padding:5px 10px;font-size:12px" onclick="addToGoal(${i})">+ Add</button>
+            <button class="del-btn" onclick="deleteGoal(${i})" aria-label="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg></button>
+          </div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div>
+        ${pct>=100?'<div style="font-size:12px;color:var(--accent);margin-top:5px">🎉 Goal reached!</div>':''}
+      </div>`;
+    }).join('');
+
+  return `<div class="card">
+    <div class="card-title">Savings Goals</div>
+    ${goalItems}
+  </div>
+  <div class="card">
+    <div class="section-title">New Goal</div>
+    <div class="form-group"><label class="form-label">Goal name</label><input type="text" id="goal-name" placeholder="e.g. Emergency fund, New phone"></div>
+    <div class="input-row" style="margin-bottom:12px">
+      <div><label class="form-label">Target (JOD)</label><input type="number" id="goal-target" placeholder="0.00" min="0" step="0.01"></div>
+      <div><label class="form-label">Saved so far</label><input type="number" id="goal-saved" placeholder="0.00" min="0" step="0.01"></div>
+    </div>
+    <button class="btn primary" onclick="addGoal()">+ Add Goal</button>
+  </div>`;
+}
+function addGoal(){
+  const name=document.getElementById('goal-name').value.trim();
+  const target=parseFloat(document.getElementById('goal-target').value);
+  const saved=parseFloat(document.getElementById('goal-saved').value)||0;
+  if(!name||!target||target<=0){toast('⚠️ Enter name and target');return;}
+  S.goals.push({id:Date.now(),name,target,saved});
+  save();renderTools();toast('✅ Goal added');
+}
+function addToGoal(i){
+  const amt=parseFloat(prompt('How much are you adding to this goal? (JOD)'));
+  if(!amt||amt<=0)return;
+  S.goals[i].saved=Math.min(S.goals[i].target,(S.goals[i].saved||0)+amt);
+  save();renderTools();toast(`✅ Added ${fmt(amt)} to goal`);
+}
+function deleteGoal(i){if(!confirm('Delete this goal?'))return;S.goals.splice(i,1);save();renderTools();}
+
+// --- SPLITS ---
+function renderSplits(){
+  const items=S.splits.length===0
+    ?'<div class="empty"><span class="empty-icon">👥</span>No shared expenses yet.</div>'
+    :S.splits.map((sp,i)=>{
+      const perPerson=(parseFloat(sp.amount)/(sp.people.length+1)).toFixed(2);
+      return `<div class="card" style="padding:13px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div><div style="font-weight:500;font-size:14px">${sp.name}</div><div style="font-size:12px;color:var(--muted);font-family:var(--mono)">${fmt(sp.amount)} total · ${fmt(perPerson)} each</div></div>
+          <button class="del-btn" onclick="deleteSplit(${i})" aria-label="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg></button>
+        </div>
+        ${sp.people.map(p=>`<div class="split-person">
+          <span style="font-size:14px">${p.name}</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <span class="badge ${p.paid?'paid':'unpaid'}">${p.paid?'Paid':'Owes '+fmt(perPerson)}</span>
+            <button class="btn secondary" style="width:auto;padding:3px 8px;font-size:11px" onclick="toggleSplitPaid(${i},'${p.name}')">${p.paid?'Undo':'✓'}</button>
+          </span>
+        </div>`).join('')}
+      </div>`;
+    }).join('');
+
+  return `${items}<div class="card">
+    <div class="section-title">New Split Expense</div>
+    <div class="form-group"><label class="form-label">What was it?</label><input type="text" id="sp-name" placeholder="e.g. Dinner, Uber, Trip"></div>
+    <div class="form-group"><label class="form-label">Total amount (JOD)</label><input type="number" id="sp-amt" placeholder="0.00" min="0" step="0.01"></div>
+    <div class="form-group"><label class="form-label">Who else shared? (names, comma separated)</label><input type="text" id="sp-people" placeholder="e.g. Ahmed, Sara, Khalid"></div>
+    <button class="btn primary" onclick="addSplit()">+ Add Split</button>
+  </div>`;
+}
+function addSplit(){
+  const name=document.getElementById('sp-name').value.trim();
+  const amt=parseFloat(document.getElementById('sp-amt').value);
+  const ppl=document.getElementById('sp-people').value.split(',').map(p=>p.trim()).filter(Boolean);
+  if(!name||!amt||amt<=0||ppl.length===0){toast('⚠️ Fill in all fields');return;}
+  S.splits.push({id:Date.now(),name,amount:amt,people:ppl.map(n=>({name:n,paid:false})),date:today()});
+  save();renderTools();toast('✅ Split added');
+}
+function toggleSplitPaid(i,name){
+  const p=S.splits[i].people.find(x=>x.name===name);
+  if(p)p.paid=!p.paid;
+  save();renderTools();
+}
+function deleteSplit(i){if(!confirm('Delete this split?'))return;S.splits.splice(i,1);save();renderTools();}
+
+// --- GROCERY ---
+function renderGrocery(){
+  const items=S.grocery.length===0
+    ?'<div class="empty"><span class="empty-icon">🛒</span>Your list is empty.</div>'
+    :S.grocery.map((g,i)=>`<div class="grocery-item">
+      <button class="grocery-check ${g.done?'done':''}" onclick="toggleGrocery(${i})" aria-label="Check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+      <span class="grocery-name ${g.done?'done':''}">${g.name}${g.est?` <span style="color:var(--muted);font-size:11px">(~${fmt(g.est)})</span>`:''}</span>
+      <button class="del-btn" onclick="deleteGrocery(${i})" aria-label="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg></button>
+    </div>`).join('');
+
+  const total=S.grocery.reduce((s,g)=>s+(parseFloat(g.est)||0),0);
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card-title" style="margin:0">Shopping List</div>
+      ${total>0?`<span style="font-size:13px;font-family:var(--mono);color:var(--warn)">~${fmt(total)}</span>`:''}
+    </div>
+    ${items}
+    ${S.grocery.length>0?`<button class="btn danger-btn" style="margin-top:12px;padding:8px" onclick="clearDoneGrocery()">🗑️ Clear checked items</button>`:''}
+  </div>
+  <div class="card">
+    <div class="section-title">Add Item</div>
+    <div class="input-row" style="margin-bottom:10px">
+      <div><label class="form-label">Item</label><input type="text" id="gr-name" placeholder="e.g. Milk, Bread"></div>
+      <div><label class="form-label">Est. cost (JOD)</label><input type="number" id="gr-est" placeholder="Optional" min="0" step="0.01"></div>
+    </div>
+    <button class="btn primary" onclick="addGrocery()">+ Add Item</button>
+  </div>`;
+}
+function addGrocery(){
+  const name=document.getElementById('gr-name').value.trim();
+  const est=parseFloat(document.getElementById('gr-est').value)||0;
+  if(!name){toast('⚠️ Enter an item name');return;}
+  S.grocery.push({id:Date.now(),name,est,done:false});
+  save();renderTools();
+  document.getElementById('gr-name').value='';document.getElementById('gr-est').value='';
+}
+function toggleGrocery(i){S.grocery[i].done=!S.grocery[i].done;save();renderTools();}
+function deleteGrocery(i){S.grocery.splice(i,1);save();renderTools();}
+function clearDoneGrocery(){S.grocery=S.grocery.filter(g=>!g.done);save();renderTools();toast('✅ Cleared');}
+
+// --- CATEGORY BUDGET ---
+const CAT_LIST=[['🍔','Food'],['🚗','Transport'],['🛍️','Shopping'],['💊','Health'],['🎉','Fun'],['🏠','Home'],['📦','Other']];
+function renderCatBudget(){
+  const mk=monthKey();
+  const entries=S.daily[mk]||[];
+  const rows=CAT_LIST.map(([icon,name])=>{
+    const budget=parseFloat(S.catBudgets[icon])||0;
+    const spent=entries.filter(e=>e.cat===icon).reduce((s,e)=>s+parseFloat(e.amount),0);
+    const pct=budget>0?Math.min(100,Math.round(spent/budget*100)):0;
+    const color=pct>=100?'#ff5757':pct>=80?'#f0a500':'#1fcf8a';
+    return `<div class="cat-budget-row">
+      <div class="cat-budget-icon">${icon}</div>
+      <div class="cat-budget-info">
+        <div class="cat-budget-name">${name} ${budget>0?`· ${fmt(spent)} / ${fmt(budget)}`:'· No budget set'}</div>
+        ${budget>0?`<div class="cat-budget-bar"><div class="cat-budget-fill" style="width:${pct}%;background:${color}"></div></div>`:''}
+      </div>
+      <input type="number" style="width:80px;padding:5px 8px;font-size:12px;text-align:right" placeholder="Budget" value="${budget||''}" min="0" step="0.01" onchange="setCatBudget('${icon}',this.value)">
+    </div>`;
+  }).join('');
+
+  return `<div class="card">
+    <div class="card-title">Category Budgets — This Month</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Set a monthly spending limit per category. You'll be warned when you get close.</div>
+    ${rows}
+  </div>`;
+}
+function setCatBudget(cat,val){
+  S.catBudgets[cat]=parseFloat(val)||0;save();
+  toast('💾 Budget saved');
 }
 
-function togglePaid(i) {
-  const mk = monthKey();
-  const r = S.recurring[i];
-  if(!r.paidMonths) r.paidMonths = {};
-  if(r.paidMonths[mk]) { delete r.paidMonths[mk]; if(r.paidCount > 0) r.paidCount--; }
-  else { r.paidMonths[mk] = true; r.paidCount = (r.paidCount || 0) + 1; }
-  save();
-  const activePage = document.querySelector('.page.active').id;
-  render(activePage.replace('page-', ''));
-}
+// --- REPORT ---
+function renderReport(){
+  const mk=monthKey();
+  const income=parseFloat(S.income)||0;
+  const entries=S.daily[mk]||[];
+  const totalRec=S.recurring.reduce((s,r)=>s+parseFloat(r.amount),0);
+  const totalDaily=entries.reduce((s,e)=>s+parseFloat(e.amount),0);
+  const totalSpent=totalRec+totalDaily;
+  const paidBills=S.recurring.filter(r=>r.paidMonths&&r.paidMonths[mk]).length;
 
-function deleteRec(i) {
-  if(!confirm('Delete "' + S.recurring[i].name + '"?')) return;
-  S.recurring.splice(i, 1); save(); renderRecurring(); toast('🗑️ Deleted');
-}
+  const catTotals={};
+  entries.forEach(e=>{catTotals[e.cat]=(catTotals[e.cat]||0)+parseFloat(e.amount)});
+  const catNames={'🍔':'Food','🚗':'Transport','🛍️':'Shopping','💊':'Health','🎉':'Fun','🏠':'Home','📦':'Other'};
+  const catHTML=Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]).map(k=>`<div class="b-row"><span class="label">${k} ${catNames[k]||k}</span><span class="val">${fmt(catTotals[k])}</span></div>`).join('');
 
-function addDaily() {
-  const name = document.getElementById('d-name').value.trim();
-  const amt = parseFloat(document.getElementById('d-amt').value);
-  const cat = document.getElementById('d-cat').value;
-  if(!name || isNaN(amt) || amt <= 0) { toast('⚠️ Please enter a name and amount'); return; }
-  const mk = monthKey();
-  if(!S.daily[mk]) S.daily[mk] = [];
-  S.daily[mk].push({ id: Date.now().toString(), name, amount: amt, cat, date: today() });
-  save(); renderDaily(); renderOverview(); toast('✅ Expense logged');
-}
+  const now=new Date();
+  const reportText=`MY FINANCES — ${now.toLocaleDateString('en-US',{month:'long',year:'numeric'})}
 
-function deleteDaily(id) {
-  const mk = monthKey();
-  S.daily[mk] = (S.daily[mk] || []).filter(e => e.id !== id);
-  save(); renderDaily(); renderOverview(); toast('🗑️ Deleted');
-}
+Income: ${fmt(income)}
+Total Spent: ${fmt(totalSpent)}
+Remaining: ${fmt(income-totalSpent)}
 
-function saveIncome() {
-  S.income = parseFloat(document.getElementById('inc-input').value) || 0;
-  save(); toast('💾 Income saved');
-}
+RECURRING BILLS
+Paid: ${paidBills}/${S.recurring.length}
+Total: ${fmt(totalRec)}
 
-function saveSettings() {
-  S.settings.notifMonthly = document.getElementById('tog-monthly').checked;
-  S.settings.notifDaily = document.getElementById('tog-daily').checked;
-  save();
-}
+DAILY EXPENSES
+Total: ${fmt(totalDaily)}
+${Object.keys(catTotals).map(k=>`  ${k} ${catNames[k]||k}: ${fmt(catTotals[k])}`).join('\n')}
 
-function clearMonthData() {
-  if(!confirm('Clear all daily expenses for this month?')) return;
-  delete S.daily[monthKey()]; save(); renderDaily(); renderOverview(); toast('🗑️ Cleared');
-}
+Generated by My Finances App`;
 
-function clearAll() {
-  if(!confirm('This will delete ALL your data. Are you sure?')) return;
-  localStorage.removeItem('myfin_v2');
-  S = { income: 0, recurring: [], daily: {}, settings: { notifMonthly: true, notifDaily: true } };
-  save(); renderAll(); renderSettings(); toast('♻️ All data cleared');
+  return `<div class="card">
+    <div class="card-title">${now.toLocaleDateString('en-US',{month:'long',year:'numeric'})} Summary</div>
+    <div class="b-row"><span class="label">Income</span><span class="val">${fmt(income)}</span></div>
+    <div class="b-row"><span class="label">Recurring bills</span><span class="val">${fmt(totalRec)}</span></div>
+    <div class="b-row"><span class="label">Daily expenses</span><span class="val">${fmt(totalDaily)}</span></div>
+    <hr>
+    <div class="b-row"><span style="font-weight:600">Total spent</span><span class="val">${fmt(totalSpent)}</span></div>
+    <div class="b-row"><span style="font-weight:600">Remaining</span><span class="val" style="color:${income>totalSpent?'var(--accent)':'var(--danger)'}">${fmt(income-totalSpent)}</span></div>
+  </div>
+  ${catHTML?`<div class="card"><div class="card-title">By Category</div>${catHTML}</div>`:''}
+  <div class="card">
+    <div class="card-title">Bills Status</div>
+    <div class="b-row"><span class="label">Paid</span><span class="val" style="color:var(--accent)">${paidBills}</span></div>
+    <div class="b-row"><span class="label">Unpaid</span><span class="val" style="color:var(--warn)">${S.recurring.length-paidBills}</span></div>
+  </div>
+  <button class="btn secondary" onclick="copyReport()" style="margin-bottom:10px">📋 Copy Report Text</button>
+  <div id="report-text" style="display:none">${reportText}</div>`;
 }
-
-// ---- NOTIFICATIONS ----
-function requestNotif() {
-  const el = document.getElementById('notif-status');
-  if(!('Notification' in window)) {
-    toast('❌ Notifications not supported in this browser');
-    return;
-  }
-  Notification.requestPermission().then(p => {
-    S.settings.notifGranted = p === 'granted';
-    save();
-    if(p === 'granted') {
-      toast('🔔 Notifications enabled!');
-      new Notification('My Finances', { body: 'Reminders are now active!', icon: '💰' });
-      scheduleNotifs();
-    } else {
-      if(el) el.textContent = 'Permission denied. Please allow in browser settings.';
-      toast('❌ Permission denied');
-    }
+function copyReport(){
+  const text=document.getElementById('report-text').textContent;
+  navigator.clipboard.writeText(text).then(()=>toast('📋 Report copied!')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('📋 Copied!');
   });
 }
 
-function scheduleNotifs() {
-  if(!S.settings.notifGranted || Notification.permission !== 'granted') return;
-  // Daily at 21:00
-  if(S.settings.notifDaily) {
-    const now = new Date();
-    const t = new Date(); t.setHours(21,0,0,0);
-    if(t <= now) t.setDate(t.getDate() + 1);
-    setTimeout(() => {
-      new Notification('Daily Reminder 💰', { body: "Don't forget to log today's expenses!" });
-      scheduleNotifs();
-    }, Math.min(t - now, 2147483647));
+// ===================== SETTINGS =====================
+function renderSettings(){
+  document.getElementById('page-settings').innerHTML=`
+    <div class="card">
+      <div class="card-title">Income</div>
+      <div class="form-group"><label class="form-label">Monthly income (JOD)</label><input type="number" id="inc-input" value="${S.income||''}" placeholder="0.00" min="0" step="0.01" onchange="saveIncome()"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Notifications</div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Monthly payment reminder</div><div class="setting-desc">1st of each month at 9 AM</div></div><label class="toggle"><input type="checkbox" id="tog-monthly" ${S.settings.notifMonthly?'checked':''} onchange="saveSettings()"><span class="toggle-slider"></span></label></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Daily expense reminder</div><div class="setting-desc">Every day at 9 PM</div></div><label class="toggle"><input type="checkbox" id="tog-daily" ${S.settings.notifDaily?'checked':''} onchange="saveSettings()"><span class="toggle-slider"></span></label></div>
+      <button class="btn secondary" onclick="requestNotif()" style="margin-top:12px">🔔 Enable Notifications</button>
+      <div id="notif-status" style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Data</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">All data stored on your device only. Nothing sent to any server.</div>
+      <button class="btn danger-btn" onclick="clearMonthData()" style="margin-bottom:8px">🗑️ Clear This Month's Daily Expenses</button>
+      <button class="btn danger-btn" onclick="clearAll()">⚠️ Reset All Data</button>
+    </div>
+    <div style="text-align:center;padding:14px 0;font-size:12px;color:var(--muted)">My Finances v2.0 · Free & private<br>All data stays on your device</div>
+  `;
+}
+
+// ===================== ACTIONS =====================
+function addRec(){
+  const name=document.getElementById('rec-name').value.trim();
+  const amt=parseFloat(document.getElementById('rec-amt').value);
+  const day=parseInt(document.getElementById('rec-day').value);
+  const months=parseInt(document.getElementById('rec-months').value)||0;
+  const cat=document.getElementById('rec-cat').value;
+  if(!name||isNaN(amt)||amt<=0||!day){toast('⚠️ Fill in name, amount and due day');return;}
+  S.recurring.push({id:Date.now(),name,amount:amt,dueDay:day,totalMonths:months,paidCount:0,category:cat,paidMonths:{},extraPayments:[]});
+  save();renderRecurring();toast('✅ Payment added');
+}
+function togglePaid(i){
+  const mk=monthKey(),r=S.recurring[i];
+  if(!r.paidMonths)r.paidMonths={};
+  if(r.paidMonths[mk]){delete r.paidMonths[mk];if(r.paidCount>0)r.paidCount--;}
+  else{r.paidMonths[mk]=true;r.paidCount=(r.paidCount||0)+1;}
+  save();
+  const ap=document.querySelector('.page.active').id;
+  render(ap.replace('page-',''));
+}
+function deleteRec(i){if(!confirm('Delete "'+S.recurring[i].name+'"?'))return;S.recurring.splice(i,1);save();renderRecurring();toast('🗑️ Deleted');}
+function addDaily(){
+  const name=document.getElementById('d-name').value.trim();
+  const amt=parseFloat(document.getElementById('d-amt').value);
+  const cat=document.getElementById('d-cat').value;
+  const note=document.getElementById('d-note').value.trim();
+  if(!name||isNaN(amt)||amt<=0){toast('⚠️ Enter name and amount');return;}
+  const mk=monthKey();
+  if(!S.daily[mk])S.daily[mk]=[];
+  S.daily[mk].push({id:Date.now().toString(),name,amount:amt,cat,note,date:today()});
+  save();renderDaily();renderOverview();toast('✅ Expense logged');
+}
+function deleteDaily(id){
+  const mk=monthKey();S.daily[mk]=(S.daily[mk]||[]).filter(e=>e.id!==id);
+  save();renderDaily();renderOverview();toast('🗑️ Deleted');
+}
+function saveIncome(){S.income=parseFloat(document.getElementById('inc-input').value)||0;save();toast('💾 Income saved');}
+function saveSettings(){S.settings.notifMonthly=document.getElementById('tog-monthly').checked;S.settings.notifDaily=document.getElementById('tog-daily').checked;save();}
+function clearMonthData(){if(!confirm('Clear this month\'s daily expenses?'))return;delete S.daily[monthKey()];save();renderDaily();renderOverview();toast('🗑️ Cleared');}
+function clearAll(){
+  if(!confirm('Delete ALL data? This cannot be undone.'))return;
+  localStorage.removeItem('myfin_v3');localStorage.removeItem('myfin_v2');
+  S={income:0,recurring:[],daily:{},goals:[],splits:[],grocery:[],catBudgets:{},settings:{notifMonthly:true,notifDaily:true,notifGranted:false}};
+  save();renderAll();renderSettings();toast('♻️ All data cleared');
+}
+
+// ===================== MODAL =====================
+function showModal(title,content){
+  document.getElementById('modal-container').innerHTML=`
+    <div class="modal-overlay" onclick="closeModalOutside(event)">
+      <div class="modal">
+        <div class="modal-title">${title}<button class="modal-close" onclick="closeModal()" aria-label="Close">×</button></div>
+        ${content}
+      </div>
+    </div>`;
+}
+function closeModal(){document.getElementById('modal-container').innerHTML='';}
+function closeModalOutside(e){if(e.target===e.currentTarget)closeModal();}
+
+// ===================== NOTIFICATIONS =====================
+function requestNotif(){
+  if(!('Notification' in window)){toast('❌ Not supported in this browser');return;}
+  Notification.requestPermission().then(p=>{
+    S.settings.notifGranted=p==='granted';save();
+    if(p==='granted'){toast('🔔 Notifications enabled!');new Notification('My Finances',{body:'Reminders are now active!'});scheduleNotifs();}
+    else{toast('❌ Permission denied — allow in browser settings');}
+  });
+}
+function scheduleNotifs(){
+  if(!S.settings.notifGranted||Notification.permission!=='granted')return;
+  if(S.settings.notifDaily){
+    const now=new Date(),t=new Date();t.setHours(21,0,0,0);
+    if(t<=now)t.setDate(t.getDate()+1);
+    setTimeout(()=>{new Notification('Daily Reminder 💰',{body:"Don't forget to log today's expenses!"});scheduleNotifs();},Math.min(t-now,2147483647));
   }
-  // Monthly on 1st
-  if(S.settings.notifMonthly) {
-    const now = new Date();
-    const t = new Date(now.getFullYear(), now.getMonth() + 1, 1, 9, 0, 0);
-    setTimeout(() => {
-      const unpaid = S.recurring.filter(r => !r.paidMonths || !r.paidMonths[monthKey()]).length;
-      if(unpaid > 0) new Notification('Monthly Check 📋', { body: `You have ${unpaid} unpaid bill${unpaid > 1 ? 's' : ''} this month!` });
+  if(S.settings.notifMonthly){
+    const now=new Date(),t=new Date(now.getFullYear(),now.getMonth()+1,1,9,0,0);
+    setTimeout(()=>{
+      const unpaid=S.recurring.filter(r=>!r.paidMonths||!r.paidMonths[monthKey()]).length;
+      if(unpaid>0)new Notification('Monthly Check 📋',{body:`You have ${unpaid} unpaid bill${unpaid>1?'s':''}!`});
       scheduleNotifs();
-    }, Math.min(t - now, 2147483647));
+    },Math.min(t-now,2147483647));
   }
 }
 
-// ---- PWA MANIFEST ----
-function injectManifest() {
-  const manifest = {
-    name: 'My Finances',
-    short_name: 'Finances',
-    description: 'Personal monthly expense tracker',
-    start_url: '/',
-    display: 'standalone',
-    background_color: '#0f1117',
-    theme_color: '#0f1117',
-    orientation: 'portrait',
-    icons: [
-      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230f1117'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E", sizes: '192x192', type: 'image/svg+xml' },
-      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230f1117'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E", sizes: '512x512', type: 'image/svg+xml' }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-  document.getElementById('manifest-link').href = URL.createObjectURL(blob);
+// ===================== PWA =====================
+function injectManifest(){
+  const m={name:'My Finances',short_name:'Finances',description:'Personal expense tracker',start_url:'/',display:'standalone',background_color:'#0f1117',theme_color:'#0f1117',orientation:'portrait',
+    icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230f1117'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E",sizes:'192x192',type:'image/svg+xml'}]};
+  const blob=new Blob([JSON.stringify(m)],{type:'application/json'});
+  document.getElementById('manifest-link').href=URL.createObjectURL(blob);
 }
 
-// ---- INIT ----
-function init() {
-  initHeader();
-  injectManifest();
-  renderAll();
-  if(S.settings.notifGranted) scheduleNotifs();
+function init(){
+  initHeader();injectManifest();renderAll();
+  if(S.settings.notifGranted)scheduleNotifs();
 }
 init();
 </script>

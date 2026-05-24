@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My Finances">
+<meta name="theme-color" content="#0f1117">
+<title>My Finances</title>
+<link rel="manifest" id="manifest-link">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f1117;--surface:#181c27;--surface2:#1e2333;--border:#2a2f45;
+  --text:#f0f2ff;--muted:#6b7399;--accent:#1fcf8a;--accent-dim:#0f6e4a;
+  --danger:#ff5757;--danger-dim:#5c1c1c;--warn:#f0a500;--warn-dim:#5c3c00;
+  --info:#4a9eff;--font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  --radius:14px;--radius-sm:8px;--safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;overscroll-behavior:none}
+body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
+
+/* Header */
+.header{padding:52px 20px 16px;background:var(--bg);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border)}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.app-title{font-size:22px;font-weight:600;letter-spacing:-0.5px}
+.month-label{font-size:13px;color:var(--muted);font-family:var(--mono)}
+.header-actions{display:flex;gap:8px}
+.icon-btn{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:18px;transition:all .15s}
+.icon-btn:active{transform:scale(.93)}
+
+/* Nav */
+.nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:8px 12px calc(8px + var(--safe-bottom));position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:100;gap:4px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-radius:var(--radius-sm);border:none;background:none;color:var(--muted);cursor:pointer;font-size:10px;font-family:var(--font);transition:all .15s}
+.nav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.active{color:var(--accent);background:rgba(31,207,138,.08)}
+.nav-btn:active{transform:scale(.93)}
+
+/* Scroll area */
+.scroll{flex:1;overflow-y:auto;padding:16px 20px calc(80px + var(--safe-bottom));-webkit-overflow-scrolling:touch}
+
+/* Pages */
+.page{display:none}.page.active{display:block}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+
+/* Metric grid */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.metric-value{font-size:20px;font-weight:600;font-family:var(--mono);letter-spacing:-0.5px}
+.metric-value.green{color:var(--accent)}.metric-value.red{color:var(--danger)}.metric-value.yellow{color:var(--warn)}
+
+/* Alert */
+.alert{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.alert.success{background:rgba(31,207,138,.1);border:1px solid rgba(31,207,138,.25);color:#6effc4}
+.alert.danger{background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.25);color:#ffaaaa}
+.alert.warn{background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.25);color:#ffd166}
+.alert.info{background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.25);color:#a0caff}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* Progress */
+.progress{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-top:10px}
+.progress-fill{height:100%;border-radius:100px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* Budget row */
+.b-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px}
+.b-row:last-child{border-bottom:none}
+.b-row .label{color:var(--muted);font-size:13px}
+.b-row .val{font-family:var(--mono);font-weight:500}
+
+/* Payment items */
+.pay-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.pay-item:last-child{border-bottom:none}
+.check-circle{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;color:transparent}
+.check-circle.checked{background:var(--accent);border-color:var(--accent);color:#fff}
+.check-circle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.pay-info{flex:1;min-width:0}
+.pay-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pay-sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono)}
+.badge{font-size:10px;padding:3px 8px;border-radius:100px;font-weight:600;white-space:nowrap}
+.badge.paid{background:rgba(31,207,138,.15);color:var(--accent)}
+.badge.unpaid{background:rgba(240,165,0,.15);color:var(--warn)}
+.badge.done{background:rgba(74,158,255,.15);color:var(--info)}
+.badge.red{background:rgba(255,87,87,.15);color:var(--danger)}
+
+/* Daily items */
+.daily-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.daily-item:last-child{border-bottom:none}
+.cat-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.daily-info{flex:1;min-width:0}
+.daily-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.daily-date{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.daily-amt{font-family:var(--mono);font-weight:600;font-size:14px;color:var(--danger)}
+
+/* Forms */
+.form-group{margin-bottom:12px}
+.form-label{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;display:block}
+input[type=text],input[type=number],select,textarea{
+  width:100%;padding:11px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text);
+  font-size:15px;
+  font-family:var(--font);
+  outline:none;
+  transition:border-color .15s;
+  appearance:none;-webkit-appearance:none
+}
+input:focus,select:focus{border-color:var(--accent)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7399' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:var(--radius-sm);border:none;font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);color:#0a2e1e}
+.btn.primary:hover{opacity:.9}
+.btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn.danger-btn{background:rgba(255,87,87,.1);color:var(--danger);border:1px solid rgba(255,87,87,.3)}
+.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Delete btn */
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;display:flex;align-items:center;transition:color .15s;flex-shrink:0}
+.del-btn:active{color:var(--danger)}
+.del-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Divider */
+hr{border:none;border-top:1px solid var(--border);margin:10px 0}
+
+/* Section header */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:16px;font-weight:600}
+
+/* Empty */
+.empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:14px;line-height:1.7}
+.empty-icon{font-size:32px;display:block;margin-bottom:8px}
+
+/* Notif permission */
+.notif-bar{background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.2);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:#a0caff;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+
+/* Settings rows */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-info .setting-name{font-size:14px;font-weight:500}
+.setting-info .setting-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.toggle{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:100px;transition:.2s}
+.toggle-slider:before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(18px)}
+
+/* Scroll bar */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:100px}
+
+/* Toast */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* day group */
+.day-group{margin-bottom:16px}
+.day-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="app-title">💰 My Finances</div>
+      <div class="month-label" id="month-label"></div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="requestNotif()" title="Enable notifications" aria-label="Enable notifications">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="scroll" id="main-scroll">
+  <div class="page active" id="page-overview"></div>
+  <div class="page" id="page-recurring"></div>
+  <div class="page" id="page-daily"></div>
+  <div class="page" id="page-settings"></div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="nav('overview')" id="nav-overview">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Overview
+  </button>
+  <button class="nav-btn" onclick="nav('recurring')" id="nav-recurring">
+    <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+    Recurring
+  </button>
+  <button class="nav-btn" onclick="nav('daily')" id="nav-daily">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+    Daily
+  </button>
+  <button class="nav-btn" onclick="nav('settings')" id="nav-settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CURRENCY = 'JOD';
+const fmt = n => CURRENCY + ' ' + parseFloat(n).toFixed(2);
+const today = () => new Date().toISOString().slice(0,10);
+const monthKey = () => new Date().toISOString().slice(0,7);
+
+let S = JSON.parse(localStorage.getItem('myfin_v2') || 'null') || {
+  income: 0,
+  recurring: [],
+  daily: {},
+  settings: { notifMonthly: true, notifDaily: true, notifGranted: false }
+};
+const save = () => localStorage.setItem('myfin_v2', JSON.stringify(S));
+
+// ---- TOAST ----
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ---- NAV ----
+function nav(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page).classList.add('active');
+  document.getElementById('main-scroll').scrollTop = 0;
+  render(page);
+}
+
+// ---- RENDER ROUTER ----
+function render(page) {
+  if(page === 'overview') renderOverview();
+  else if(page === 'recurring') renderRecurring();
+  else if(page === 'daily') renderDaily();
+  else if(page === 'settings') renderSettings();
+}
+function renderAll() { render('overview'); }
+
+// ---- MONTH LABEL ----
+function initHeader() {
+  const now = new Date();
+  document.getElementById('month-label').textContent =
+    now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+// ---- OVERVIEW ----
+function renderOverview() {
+  const income = parseFloat(S.income) || 0;
+  const mk = monthKey();
+  const totalRec = S.recurring.reduce((s,r) => s + parseFloat(r.amount), 0);
+  const dailyAll = S.daily[mk] || [];
+  const totalDaily = dailyAll.reduce((s,d) => s + parseFloat(d.amount), 0);
+  const totalSpent = totalRec + totalDaily;
+  const remaining = income - totalSpent;
+  const shortage = income > 0 && remaining < 0;
+  const paidCount = S.recurring.filter(r => r.paidMonths && r.paidMonths[mk]).length;
+
+  let alertHTML = '';
+  if(income === 0) {
+    alertHTML = `<div class="alert info"><span class="alert-icon">💡</span><span>Set your monthly income in <strong>Settings</strong> to see budget analysis.</span></div>`;
+  } else if(shortage) {
+    alertHTML = `<div class="alert danger"><span class="alert-icon">⚠️</span><span><strong>Budget shortage!</strong> You are over by ${fmt(Math.abs(remaining))} this month.</span></div>`;
+  } else if(remaining < income * 0.15) {
+    alertHTML = `<div class="alert warn"><span class="alert-icon">⚡</span><span>Only <strong>${fmt(remaining)}</strong> left — less than 15% of your income.</span></div>`;
+  } else {
+    alertHTML = `<div class="alert success"><span class="alert-icon">✅</span><span>On track — <strong>${fmt(remaining)}</strong> remaining this month.</span></div>`;
+  }
+
+  const pct = n => income > 0 ? Math.min(100, Math.round(n / income * 100)) : 0;
+  const barColor = shortage ? '#ff5757' : remaining < income * 0.15 ? '#f0a500' : '#1fcf8a';
+
+  const recItems = S.recurring.length === 0
+    ? '<div class="empty"><span class="empty-icon">📋</span>No recurring payments added yet</div>'
+    : S.recurring.map((r, i) => {
+        const paid = r.paidMonths && r.paidMonths[mk];
+        const left = r.totalMonths > 0 ? r.totalMonths - (r.paidCount || 0) : null;
+        const done = left !== null && left <= 0;
+        return `<div class="pay-item">
+          <button class="check-circle ${paid || done ? 'checked' : ''}" onclick="togglePaid(${i})" aria-label="Mark payment">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <div class="pay-info">
+            <div class="pay-name">${r.name}</div>
+            <div class="pay-sub">${fmt(r.amount)} · Day ${r.dueDay}${left !== null ? ' · ' + (left > 0 ? left + ' left' : 'done') : ''}</div>
+          </div>
+          <span class="badge ${done ? 'done' : paid ? 'paid' : 'unpaid'}">${done ? 'Done' : paid ? 'Paid' : 'Unpaid'}</span>
+        </div>`;
+      }).join('');
+
+  document.getElementById('page-overview').innerHTML = `
+    ${alertHTML}
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="metric-label">💵 Monthly Income</div>
+        <div class="metric-value">${income > 0 ? fmt(income) : '—'}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">💸 Total Spent</div>
+        <div class="metric-value ${shortage ? 'red' : ''}">${fmt(totalSpent)}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">🏦 Remaining</div>
+        <div class="metric-value ${income === 0 ? '' : shortage ? 'red' : remaining < income * 0.15 ? 'yellow' : 'green'}">${income > 0 ? fmt(remaining) : '—'}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">✅ Bills Paid</div>
+        <div class="metric-value">${paidCount}<span style="font-size:13px;color:var(--muted)">/${S.recurring.length}</span></div>
+      </div>
+    </div>
+    ${income > 0 ? `
+    <div class="card">
+      <div class="card-title">Budget Breakdown</div>
+      <div class="b-row"><span class="label">Recurring payments</span><span class="val">${fmt(totalRec)} <span style="color:var(--muted);font-size:12px">(${pct(totalRec)}%)</span></span></div>
+      <div class="b-row"><span class="label">Daily expenses</span><span class="val">${fmt(totalDaily)} <span style="color:var(--muted);font-size:12px">(${pct(totalDaily)}%)</span></span></div>
+      <hr>
+      <div class="b-row"><span style="font-weight:600">Total</span><span class="val" style="color:${barColor}">${fmt(totalSpent)} <span style="color:var(--muted);font-size:12px">(${pct(totalSpent)}%)</span></span></div>
+      <div class="progress"><div class="progress-fill" style="width:${pct(totalSpent)}%;background:${barColor}"></div></div>
+    </div>` : ''}
+    <div class="card">
+      <div class="card-title">This Month's Payments</div>
+      ${recItems}
+    </div>
+  `;
+}
+
+// ---- RECURRING ----
+function renderRecurring() {
+  const mk = monthKey();
+  const list = S.recurring.length === 0
+    ? '<div class="empty"><span class="empty-icon">🔄</span>No recurring payments yet.<br>Add your first one below.</div>'
+    : S.recurring.map((r, i) => {
+        const paid = r.paidMonths && r.paidMonths[mk];
+        const left = r.totalMonths > 0 ? r.totalMonths - (r.paidCount || 0) : null;
+        const done = left !== null && left <= 0;
+        return `<div class="pay-item">
+          <button class="check-circle ${paid || done ? 'checked' : ''}" onclick="togglePaid(${i})" aria-label="Toggle paid">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <div class="pay-info">
+            <div class="pay-name">${r.name}</div>
+            <div class="pay-sub">${fmt(r.amount)} · Due day ${r.dueDay} · ${r.category}</div>
+            <div style="font-size:11px;margin-top:3px;color:${left !== null && left <= 2 ? 'var(--danger)' : 'var(--muted)'}">
+              ${left !== null ? (left > 0 ? '⏳ ' + left + ' payment' + (left === 1 ? '' : 's') + ' remaining' : '🎉 Fully paid off') : '🔁 Ongoing'}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            <span class="badge ${done ? 'done' : paid ? 'paid' : 'unpaid'}">${done ? 'Done' : paid ? 'Paid' : 'Unpaid'}</span>
+            <button class="del-btn" onclick="deleteRec(${i})" aria-label="Delete">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+
+  let days = '<option value="">Day of month</option>';
+  for(let d = 1; d <= 31; d++) days += `<option value="${d}">Day ${d}</option>`;
+
+  document.getElementById('page-recurring').innerHTML = `
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px">Add Recurring Payment</div>
+      <div class="form-group">
+        <label class="form-label">Payment name</label>
+        <input type="text" id="rec-name" placeholder="e.g. Rent, Netflix, Car loan">
+      </div>
+      <div class="input-row" style="margin-bottom:12px">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Amount (JOD)</label>
+          <input type="number" id="rec-amt" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Due day</label>
+          <select id="rec-day">${days}</select>
+        </div>
+      </div>
+      <div class="input-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Total months</label>
+          <input type="number" id="rec-months" placeholder="0 = ongoing" min="0">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Category</label>
+          <select id="rec-cat">
+            <option value="Bill">Bill</option>
+            <option value="Subscription">Subscription</option>
+            <option value="Loan">Loan</option>
+            <option value="Rent">Rent</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn primary" onclick="addRec()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Payment
+      </button>
+    </div>
+    <div class="card">
+      <div class="card-title">All Recurring Payments</div>
+      ${list}
+    </div>
+  `;
+}
+
+// ---- DAILY ----
+function renderDaily() {
+  const mk = monthKey();
+  const td = today();
+  const entries = S.daily[mk] || [];
+  const todayEntries = entries.filter(e => e.date === td);
+  const todayTotal = todayEntries.reduce((s, e) => s + parseFloat(e.amount), 0);
+  const monthTotal = entries.reduce((s, e) => s + parseFloat(e.amount), 0);
+
+  // group by day for recent view
+  const byDay = {};
+  entries.forEach(e => {
+    if(!byDay[e.date]) byDay[e.date] = [];
+    byDay[e.date].push(e);
+  });
+  const sortedDays = Object.keys(byDay).sort().reverse().slice(0, 10);
+
+  const histHTML = sortedDays.length === 0 ? '<div class="empty"><span class="empty-icon">📝</span>No expenses logged yet.</div>' :
+    sortedDays.map(d => {
+      const dayTotal = byDay[d].reduce((s, e) => s + parseFloat(e.amount), 0);
+      const label = d === td ? '📅 Today' : d;
+      return `<div class="day-group">
+        <div class="day-label" style="display:flex;justify-content:space-between">
+          <span>${label}</span><span style="color:var(--danger)">${fmt(dayTotal)}</span>
+        </div>
+        ${byDay[d].slice().reverse().map(e => `
+          <div class="daily-item">
+            <div class="cat-icon">${e.cat}</div>
+            <div class="daily-info">
+              <div class="daily-name">${e.name}</div>
+            </div>
+            <div class="daily-amt">${fmt(e.amount)}</div>
+            <button class="del-btn" onclick="deleteDaily('${e.id}')" aria-label="Delete">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>`).join('')}
+      </div>`;
+    }).join('');
+
+  document.getElementById('page-daily').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div>
+        <div style="font-size:13px;color:var(--muted)">Today's total</div>
+        <div style="font-size:26px;font-weight:600;font-family:var(--mono);color:${todayTotal > 0 ? 'var(--danger)' : 'var(--muted)'}">${fmt(todayTotal)}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;color:var(--muted)">Month total</div>
+        <div style="font-size:18px;font-weight:600;font-family:var(--mono)">${fmt(monthTotal)}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px">Log Expense</div>
+      <div class="form-group">
+        <label class="form-label">What did you spend on?</label>
+        <input type="text" id="d-name" placeholder="e.g. Lunch, Taxi, Groceries">
+      </div>
+      <div class="input-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Amount (JOD)</label>
+          <input type="number" id="d-amt" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Category</label>
+          <select id="d-cat">
+            <option value="🍔">🍔 Food</option>
+            <option value="🚗">🚗 Transport</option>
+            <option value="🛍️">🛍️ Shopping</option>
+            <option value="💊">💊 Health</option>
+            <option value="🎉">🎉 Fun</option>
+            <option value="🏠">🏠 Home</option>
+            <option value="📦">📦 Other</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn primary" onclick="addDaily()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Log Expense
+      </button>
+    </div>
+    <div class="card">
+      <div class="card-title">Expense History</div>
+      ${histHTML}
+    </div>
+  `;
+}
+
+// ---- SETTINGS ----
+function renderSettings() {
+  document.getElementById('page-settings').innerHTML = `
+    <div class="card">
+      <div class="card-title">Income</div>
+      <div class="form-group">
+        <label class="form-label">Monthly income (JOD)</label>
+        <input type="number" id="inc-input" value="${S.income || ''}" placeholder="0.00" min="0" step="0.01" onchange="saveIncome()">
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:-4px">Used to calculate your remaining budget and detect shortages.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Notifications</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Monthly payment reminder</div>
+          <div class="setting-desc">Reminds you on the 1st of each month to check bills</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="tog-monthly" ${S.settings.notifMonthly ? 'checked' : ''} onchange="saveSettings()"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-name">Daily expense reminder</div>
+          <div class="setting-desc">Reminds you at 9 PM to log today's expenses</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="tog-daily" ${S.settings.notifDaily ? 'checked' : ''} onchange="saveSettings()"><span class="toggle-slider"></span></label>
+      </div>
+      <div style="margin-top:14px">
+        <button class="btn secondary" onclick="requestNotif()" style="margin-bottom:8px">
+          🔔 Enable Notifications
+        </button>
+        <div id="notif-status" style="font-size:12px;color:var(--muted);text-align:center"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Data</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:14px">All data is stored on this device only. Nothing is sent to any server.</div>
+      <button class="btn danger-btn" onclick="clearMonthData()" style="margin-bottom:8px">
+        🗑️ Clear This Month's Daily Expenses
+      </button>
+      <button class="btn danger-btn" onclick="clearAll()">
+        ⚠️ Reset All Data
+      </button>
+    </div>
+    <div style="text-align:center;padding:16px 0;font-size:12px;color:var(--muted)">
+      My Finances · Free personal expense tracker<br>All data stays on your device
+    </div>
+  `;
+}
+
+// ---- ACTIONS ----
+function addRec() {
+  const name = document.getElementById('rec-name').value.trim();
+  const amt = parseFloat(document.getElementById('rec-amt').value);
+  const day = parseInt(document.getElementById('rec-day').value);
+  const months = parseInt(document.getElementById('rec-months').value) || 0;
+  const cat = document.getElementById('rec-cat').value;
+  if(!name || isNaN(amt) || amt <= 0 || !day) { toast('⚠️ Please fill in name, amount and due day'); return; }
+  S.recurring.push({ id: Date.now(), name, amount: amt, dueDay: day, totalMonths: months, paidCount: 0, category: cat, paidMonths: {} });
+  save(); renderRecurring(); toast('✅ Payment added');
+}
+
+function togglePaid(i) {
+  const mk = monthKey();
+  const r = S.recurring[i];
+  if(!r.paidMonths) r.paidMonths = {};
+  if(r.paidMonths[mk]) { delete r.paidMonths[mk]; if(r.paidCount > 0) r.paidCount--; }
+  else { r.paidMonths[mk] = true; r.paidCount = (r.paidCount || 0) + 1; }
+  save();
+  const activePage = document.querySelector('.page.active').id;
+  render(activePage.replace('page-', ''));
+}
+
+function deleteRec(i) {
+  if(!confirm('Delete "' + S.recurring[i].name + '"?')) return;
+  S.recurring.splice(i, 1); save(); renderRecurring(); toast('🗑️ Deleted');
+}
+
+function addDaily() {
+  const name = document.getElementById('d-name').value.trim();
+  const amt = parseFloat(document.getElementById('d-amt').value);
+  const cat = document.getElementById('d-cat').value;
+  if(!name || isNaN(amt) || amt <= 0) { toast('⚠️ Please enter a name and amount'); return; }
+  const mk = monthKey();
+  if(!S.daily[mk]) S.daily[mk] = [];
+  S.daily[mk].push({ id: Date.now().toString(), name, amount: amt, cat, date: today() });
+  save(); renderDaily(); renderOverview(); toast('✅ Expense logged');
+}
+
+function deleteDaily(id) {
+  const mk = monthKey();
+  S.daily[mk] = (S.daily[mk] || []).filter(e => e.id !== id);
+  save(); renderDaily(); renderOverview(); toast('🗑️ Deleted');
+}
+
+function saveIncome() {
+  S.income = parseFloat(document.getElementById('inc-input').value) || 0;
+  save(); toast('💾 Income saved');
+}
+
+function saveSettings() {
+  S.settings.notifMonthly = document.getElementById('tog-monthly').checked;
+  S.settings.notifDaily = document.getElementById('tog-daily').checked;
+  save();
+}
+
+function clearMonthData() {
+  if(!confirm('Clear all daily expenses for this month?')) return;
+  delete S.daily[monthKey()]; save(); renderDaily(); renderOverview(); toast('🗑️ Cleared');
+}
+
+function clearAll() {
+  if(!confirm('This will delete ALL your data. Are you sure?')) return;
+  localStorage.removeItem('myfin_v2');
+  S = { income: 0, recurring: [], daily: {}, settings: { notifMonthly: true, notifDaily: true } };
+  save(); renderAll(); renderSettings(); toast('♻️ All data cleared');
+}
+
+// ---- NOTIFICATIONS ----
+function requestNotif() {
+  const el = document.getElementById('notif-status');
+  if(!('Notification' in window)) {
+    toast('❌ Notifications not supported in this browser');
+    return;
+  }
+  Notification.requestPermission().then(p => {
+    S.settings.notifGranted = p === 'granted';
+    save();
+    if(p === 'granted') {
+      toast('🔔 Notifications enabled!');
+      new Notification('My Finances', { body: 'Reminders are now active!', icon: '💰' });
+      scheduleNotifs();
+    } else {
+      if(el) el.textContent = 'Permission denied. Please allow in browser settings.';
+      toast('❌ Permission denied');
+    }
+  });
+}
+
+function scheduleNotifs() {
+  if(!S.settings.notifGranted || Notification.permission !== 'granted') return;
+  // Daily at 21:00
+  if(S.settings.notifDaily) {
+    const now = new Date();
+    const t = new Date(); t.setHours(21,0,0,0);
+    if(t <= now) t.setDate(t.getDate() + 1);
+    setTimeout(() => {
+      new Notification('Daily Reminder 💰', { body: "Don't forget to log today's expenses!" });
+      scheduleNotifs();
+    }, Math.min(t - now, 2147483647));
+  }
+  // Monthly on 1st
+  if(S.settings.notifMonthly) {
+    const now = new Date();
+    const t = new Date(now.getFullYear(), now.getMonth() + 1, 1, 9, 0, 0);
+    setTimeout(() => {
+      const unpaid = S.recurring.filter(r => !r.paidMonths || !r.paidMonths[monthKey()]).length;
+      if(unpaid > 0) new Notification('Monthly Check 📋', { body: `You have ${unpaid} unpaid bill${unpaid > 1 ? 's' : ''} this month!` });
+      scheduleNotifs();
+    }, Math.min(t - now, 2147483647));
+  }
+}
+
+// ---- PWA MANIFEST ----
+function injectManifest() {
+  const manifest = {
+    name: 'My Finances',
+    short_name: 'Finances',
+    description: 'Personal monthly expense tracker',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#0f1117',
+    theme_color: '#0f1117',
+    orientation: 'portrait',
+    icons: [
+      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230f1117'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle'%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E", sizes: '192x192', type: 'image/svg+xml' },
+      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230f1117'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E", sizes: '512x512', type: 'image/svg+xml' }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  document.getElementById('manifest-link').href = URL.createObjectURL(blob);
+}
+
+// ---- INIT ----
+function init() {
+  initHeader();
+  injectManifest();
+  renderAll();
+  if(S.settings.notifGranted) scheduleNotifs();
+}
+init();
+</script>
+</body>
+</html>
